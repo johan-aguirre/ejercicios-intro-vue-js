@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ejercicio vue.js 1</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+    
+    <div id="app">
+        <!-- 1) Ejercicio de Intro -->
+        <h1>1) Ejercicio de Intro</h1>
+        {{mensaje}}
+        <a v-bind:href="url" target="_blank">Enlace largo vue.js</a>
+        <a :href="url" target="_blank">Enlace corto vue.js</a>
+
+        <!-- 2) Ejercicio de v-if y v-show -->
+        <h1>2) Ejercicio de v-if y v-show</h1>
+
+        <h2 v-if="expresion">hola</h2>
+        <h2 v-if="!expresion">como estas</h2>
+
+        <!-- v-if muestra o desaparece el elemento del DOM -->
+        <template v-if="!expresion">
+            <h2>texto</h2>
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Explicabo asperiores eos quasi 
+                corrupti illum ratione odio eius id impedit dolores possimus ab odit animi rem eveniet 
+                error iure, aut magnam!
+            </p>
+        </template>
+        
+        <!-- v-show solo adiciona o quita css display none -->
+        <div v-show="expresion">
+            <h2>texto 2</h2>
+            <p>
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Porro voluptatibus, sunt recusandae 
+                quod totam animi maiores, magni exercitationem quidem et dolorem quae at incidunt asperiores 
+                a nostrum? Ducimus, ipsum quidem.
+            </p>
+        </div>
+
+        <!-- 3) filtro de datos -->
+        <h1>3) filtro de datos</h1>
+
+        <h2>{{'texto mayusculas' | textoMayucula}}</h2>
+        <h2>{{'TEXTO MINUSCULAS' | textoMinuscula}}</h2>
+
+        <h3>{{textoMayucula  | textoMinuscula}}</h3>
+        <h3>{{textoMinuscula | textoMayucula}}</h3>
+
+        <!-- 4) Manejo de eventos usand v-on: y @nombreEvento -->
+        <h1>4) Manejo de eventos usand v-on: y @nombreEvento</h1>
+
+        <button v-on:click="sumar">Sumar</button> 
+        <button @click="restar">Restar</button>
+        <button @click="contador++">Sumar</button>
+        <p>{{contador}}</p>
+
+        <!-- 5) Manejo de formularios usanod v-model-->
+        <h1>5) Manejo de formularios usando v-model</h1>
+        <form action="">
+            <input type="text" name="" id="" placeholder="Ingresa tu nombre" v-model="nombre">
+            <p>Tu nombre es {{nombre | textoMayucula }}</p>
+        </form>
+
+        <!-- <form v-on:submit.prevent="enviar" action=""> -->
+        <form @submit.prevent="enviar" action="">
+            <p>Cuales son tus cusos favoritos</p>
+            <input type="checkbox" v-model="cursos" id="vue" value="vue">
+            <label for="vue">Curso vue</label>
+            <input type="checkbox" v-model="cursos" id="react" value="react">
+            <label for="react">Curso react</label>
+            <input type="checkbox" v-model="cursos" id="angular" value="angular">
+            <label for="angular">Curso angular</label>
+            <input type="checkbox" v-model="cursos" id="java" value="java">
+            <label for="java">Curso java</label>
+            <input type="checkbox" v-model="cursos" id="php" value="php">
+            <label for="php">Curso php</label>
+            <button>Enviar</button>
+        </form>
+
+
+        <!-- 6) Listar elementos usando ciclos-->
+        <h1>6) Listar elementos usando ciclos</h1>
+        <form @submit.prevent="enviar2" action="">
+            <p>Cuales son tus cusos favoritos</p>
+            <template v-for="curso in cursos2">
+                <input type="checkbox" v-model="cursos2Seleccionados" v-bind:id="curso.value" v-bind:value="curso.value">
+                <label v-bind:for="curso.value">{{curso.nombre}}</label>
+            </template>
+            <button>Enviar</button>
+        </form>
+
+        <!-- 7) Uso de componentes-->
+        <h1>7) Uso de componentes</h1>
+        <form @submit.prevent="enviar3" action="">
+            <p>Cuales son tus cusos favoritos</p>
+            <template v-for="curso in cursos3">
+                <cursos v-bind:curso="curso" @checked="seleccionarCurso3"></cursos>
+            </template>
+            <button>Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        // componente vue
+        Vue.component('cursos', {
+            props : ['curso'],
+            template: `
+                <div>
+                <input type="checkbox" v-bind:id="curso.value" v-bind:value="curso.value" @change="emitirAccion">
+                <label v-bind:for="curso.value">{{curso.nombre}}</label>
+                </div>
+            `,
+            methods:{
+                emitirAccion: function (ev){
+                    this.$emit('checked', this.curso.value, ev.target.checked)
+                }
+            }
+        })
+
+        // componente principal
+        var app = new Vue({
+            el: '#app',
+            data: {
+                mensaje: 'Hola mundo',
+                url: 'https://vuejs.org/v2/guide/',
+                expresion: false,
+                textoMayucula: 'HOLA COMO ESTAS',
+                textoMinuscula: 'bien y tu que tal',
+                contador: 0,
+
+                nombre: '',
+                cursos: [],
+                cursos2:[
+                            {
+                                value: "vue2", 
+                                nombre: "Curso vue"
+                            },
+                            {
+                                value: "react2", 
+                                nombre: "Curso react"
+                            },
+                            {
+                                value: "angular2", 
+                                nombre: "Curso angular"
+                            },
+                            {
+                                value: "java2", 
+                                nombre: "Curso java"
+                            },
+                            {
+                                value: "php2", 
+                                nombre: "Curso php"
+                            },
+                        ],
+                cursos2Seleccionados: [],
+                cursos3:[
+                            {
+                                value: "vue3", 
+                                nombre: "Curso vue"
+                            },
+                            {
+                                value: "react3", 
+                                nombre: "Curso react"
+                            },
+                            {
+                                value: "angular3", 
+                                nombre: "Curso angular"
+                            },
+                            {
+                                value: "java3", 
+                                nombre: "Curso java"
+                            },
+                            {
+                                value: "php3", 
+                                nombre: "Curso php"
+                            },
+                        ],
+                cursos3Seleccionados: []
+            },
+            filters: {
+                textoMayucula: function (str)
+                {
+                    return str.toUpperCase();
+                },
+                textoMinuscula: function (str)
+                {
+                    return str.toLowerCase();
+                }
+            },
+            methods: {
+                sumar: function()
+                {
+                    this.contador ++;
+                },
+                restar: function()
+                {
+                    this.contador --;
+                },
+                enviar: function()
+                {
+                    console.log(this.cursos);
+                },
+                enviar2: function()
+                {
+                    console.log(this.cursos2Seleccionados); 
+                },
+                seleccionarCurso3: function(curso, checked)
+                {
+                    console.log(curso, checked);
+                    if(checked)
+                        this.cursos3Seleccionados.push(curso)
+                    else
+                    {
+                        let index = this.cursos3Seleccionados.indexOf(curso)
+                        this.cursos3Seleccionados.splice(index,1)
+                    }
+                },
+                enviar3: function()
+                {
+                    console.log(this.cursos3Seleccionados);
+                }
+            }
+        })
+    </script>
+</body>
+</html>

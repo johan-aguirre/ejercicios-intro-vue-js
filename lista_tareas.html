@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Ejercicio Vue.js lista de tareas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+</head>
+<body>
+    <div id="app">
+        <div>
+            <div class="col-md-12">
+
+                <h1>Lista de tareas</h1>
+                <h3>Tareas pendientes: {{tareasPendientes}}</h3>
+                <h3>Tareas Completadas: {{tareasCompletadas}}</h3>
+                <ul>
+                    <li v-for="tarea in tareas">
+                        <span v-text="tarea.descripcion"></span>
+                        <span v-if="tarea.completada" class="glyphicon glyphicon-check" @click="tarea.completada = false"></span>
+                        <span v-else class="glyphicon glyphicon-unchecked" @click="tarea.completada = true"></span>
+                    </li>
+                </ul>
+
+                <input v-on:keyup.enter="agregarTarea" type="text" v-model="nuevaTarea">
+
+                <adjunto @mi-evento="avisoCargaArchivo"></adjunto>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script>
+
+        Vue.component('adjunto', {
+            data() { 
+                return{
+                    label: 'subir adjunto'
+                }
+            },
+            template: `<div>
+                <input type="file">
+                <label @click="emitirCargaArchivo">{{this.label}}</label>
+                </div>`,
+            methods: {
+                emitirCargaArchivo: function (ev)
+                {
+                    console.log('invocare al emit')
+                    this.$emit('mi-evento')
+                }
+            }
+        })
+
+        var app = new Vue({
+            el: '#app',
+            data: {
+                nuevaTarea: '',
+                tareas: [
+                    { descripcion: 'tarea 1', completada: true },
+                    { descripcion: 'tarea 2', completada: false },
+                    { descripcion: 'tarea 3', completada: false }
+                ]
+            },
+            methods: {
+                agregarTarea: function () {
+                    this.tareas.push({ descripcion: this.nuevaTarea, completada: false })
+                    console.log(this.nuevaTarea)
+                    this.nuevaTarea = ''
+                    console.log(this.tareas)
+                },
+                avisoCargaArchivo: function () {
+                    console.log('se avisa que se ha cargado un nuevo archivo');
+                },
+                /*
+                tareasPendientes: function (){
+                    
+                    console.log('tareasPendientes')
+                    return this.tareas.filter(function(tarea){
+                        return ! tarea.completada
+                    }).length
+                },
+                tareasCompletadas: function (){
+                    
+                    console.log('tareasCompletadas')
+                    return this.tareas.filter(function(tarea){
+                        return  tarea.completada
+                    }).length
+                }
+                */
+            },
+            computed: {
+                tareasPendientes: function (){
+                    console.log('tareasPendientes')
+                    return this.tareas.filter(function(tarea){
+                        return ! tarea.completada
+                    }).length
+                },
+                tareasCompletadas: function (){
+                    console.log('tareasCompletadas')
+                    return this.tareas.filter(function(tarea){
+                        return  tarea.completada
+                    }).length
+                }
+            }
+            
+        })
+    </script>
+</body>
+</html>
